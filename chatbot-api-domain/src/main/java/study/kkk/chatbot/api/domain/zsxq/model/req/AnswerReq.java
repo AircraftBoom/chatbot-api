@@ -10,15 +10,15 @@ public class AnswerReq {
 
     private study.kkk.chatbot.api.domain.zsxq.model.req.ReqData req_data;
 
-    public AnswerReq(study.kkk.chatbot.api.domain.zsxq.model.req.ReqData req_data) {
+    public AnswerReq(ReqData req_data) {
         this.req_data = req_data;
     }
 
-    public study.kkk.chatbot.api.domain.zsxq.model.req.ReqData getReq_data() {
+    public ReqData getReq_data() {
         return req_data;
     }
 
-    public void setReq_data(study.kkk.chatbot.api.domain.zsxq.model.req.ReqData req_data) {
+    public void setReq_data(ReqData req_data) {
         this.req_data = req_data;
     }
 

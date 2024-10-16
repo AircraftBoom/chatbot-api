@@ -1,7 +1,6 @@
 package study.kkk.chatbot.api;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.base.CharMatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import study.kkk.chatbot.api.domain.ai.IDeepSeekApi;
 import study.kkk.chatbot.api.domain.zsxq.IZsxqApi;
 import study.kkk.chatbot.api.domain.zsxq.model.aggregates.UnAnsweredQuestionsAggregates;
 import study.kkk.chatbot.api.domain.zsxq.model.vo.Topics;
@@ -16,7 +16,7 @@ import study.kkk.chatbot.api.domain.zsxq.model.vo.Topics;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
-import java.util.Timer;
+
 
 /**
  * ClassName: SpringBootRunTest
@@ -40,6 +40,9 @@ public class SpringBootRunTest {
     @Resource
     private IZsxqApi zsxqApi;
 
+    @Resource
+    private IDeepSeekApi deepSeekApi;
+
     @Test
     public void testZsxqApi() throws IOException, InterruptedException {
         UnAnsweredQuestionsAggregates unAnsweredQuestionsAggregates = zsxqApi.topicIdOfTheUnansweredQuestion(groupId, cookie);
@@ -61,5 +64,11 @@ public class SpringBootRunTest {
 
             Thread.sleep(3000);
         }
+    }
+
+    @Test
+    public void testDeepSeekApi() throws IOException {
+        String s = deepSeekApi.doDeepSeek("如何高效率地休息？");
+        System.out.println(s);
     }
 }

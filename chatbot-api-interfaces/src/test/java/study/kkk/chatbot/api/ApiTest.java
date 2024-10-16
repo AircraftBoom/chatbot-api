@@ -1,5 +1,6 @@
 package study.kkk.chatbot.api;
 
+import com.alibaba.fastjson.JSON;
 import io.github.bonigarcia.wdm.online.HttpClient;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,6 +12,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+import study.kkk.chatbot.api.domain.ai.model.aggregates.AiAnswer;
+import study.kkk.chatbot.api.domain.ai.model.vo.Choice;
 
 import java.beans.Transient;
 import java.io.IOException;
@@ -68,6 +71,41 @@ public class ApiTest {
         if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
             String res = EntityUtils.toString(response.getEntity());
             System.out.println(res);
+        }else{
+            System.out.println(response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testDeepSeek() throws IOException {
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+        HttpPost httpPost = new HttpPost("https://api.deepseek.com/chat/completions");
+        httpPost.addHeader("Content-Type", "application/json");
+        httpPost.addHeader("Authorization", "Bearer sk-97dd0c4a729e4b169653bdb14a9d8f74");
+
+        String paramJson = "{\n" +
+                "        \"model\": \"deepseek-chat\",\n" +
+                "        \"messages\": [\n" +
+                "          {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n" +
+                "          {\"role\": \"user\", \"content\": \"我该如何找到工作？\"}\n" +
+                "        ],\n" +
+                "        \"stream\": false\n" +
+                "      }";
+        StringEntity stringEntity = new StringEntity(paramJson, ContentType.create("text/json", "utf-8"));
+        httpPost.setEntity(stringEntity);
+
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+
+        if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+            String res = EntityUtils.toString(response.getEntity());
+            AiAnswer answer = JSON.parseObject(res, AiAnswer.class);
+            StringBuilder answerStr = new StringBuilder();
+            for(Choice choice : answer.getChoices()){
+                answerStr.append(choice.getMessage().getContent());
+            }
+
+            System.out.println(answerStr);
         }else{
             System.out.println(response.getStatusLine().getStatusCode());
         }
