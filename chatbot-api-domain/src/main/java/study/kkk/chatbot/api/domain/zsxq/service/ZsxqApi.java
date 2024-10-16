@@ -20,9 +20,12 @@ import study.kkk.chatbot.api.domain.zsxq.model.aggregates.UnAnsweredQuestionsAgg
 import study.kkk.chatbot.api.domain.zsxq.model.req.AnswerReq;
 import study.kkk.chatbot.api.domain.zsxq.model.req.ReqData;
 import study.kkk.chatbot.api.domain.zsxq.model.res.AnswerRes;
+import study.kkk.chatbot.api.domain.zsxq.model.res.RespData;
+import study.kkk.chatbot.api.domain.zsxq.model.vo.Topics;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * ClassName: ZsxqApi
@@ -50,8 +53,15 @@ public class ZsxqApi implements IZsxqApi {
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             String jsonStr = EntityUtils.toString(response.getEntity());
             logger.info("拉取问题的结果：groupId:{}, jsonStr{}", groupId, jsonStr);
-            //logger.info("content-type:{}", Arrays.toString(response.getHeaders("content-type")));
-            return JSON.parseObject(jsonStr, UnAnsweredQuestionsAggregates.class);
+            UnAnsweredQuestionsAggregates unAnsweredQuestionsAggregates = JSON.parseObject(jsonStr, UnAnsweredQuestionsAggregates.class);
+            List<Topics> topics = unAnsweredQuestionsAggregates.getResp_data().getTopics();
+            if(topics != null) {
+                topics.removeIf(topic -> topic.show_comments != null);
+                RespData respData = unAnsweredQuestionsAggregates.getResp_data();
+                respData.setTopics(topics);
+                unAnsweredQuestionsAggregates.setResp_data(respData);
+            }
+            return unAnsweredQuestionsAggregates;
         } else {
             throw new RuntimeException("topicIdOfTheUnansweredQuestion Err coid is" + response.getStatusLine().getStatusCode());
         }

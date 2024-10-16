@@ -63,8 +63,6 @@ public class DeepSeekApi implements IDeepSeekApi {
             for(Choice choice : answer.getChoices()){
                 answerStr.append(choice.getMessage().getContent());
             }
-            logger.info("{}\n{}", question, answerStr);
-
             return answerStr.toString();
         }else{
             System.out.println(response.getStatusLine().getStatusCode());
